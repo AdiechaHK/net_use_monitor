@@ -1,3 +1,4 @@
+import configparser
 import scrapy
 import time
 import math
@@ -8,8 +9,6 @@ class BlogSpider(scrapy.Spider):
     start_urls = ['http://3.7.153.175/vtpl/customer']
 
     def parse(self, response):
-
-
         fields = [
             '__LASTFOCUS',
             '__EVENTTARGET',
@@ -51,10 +50,9 @@ class BlogSpider(scrapy.Spider):
         if (len(q) > 0):
             val = q.extract()[0]
             mb = re.findall('\\d+', val)[0]
-            print("=====================================================")
-            print(mb)
-            print("=====================================================")
-            f = open("output.txt", "a")
+            config = configparser.ConfigParser()
+            config.read('config.ini')
+            f = open(config['DEFAULT']['OUTPUT'], "a")
             f.write(str(math.floor(time.time())))
             f.write(":" + mb + "\n")
             f.close()
