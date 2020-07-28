@@ -52,7 +52,7 @@ class BlogSpider(scrapy.Spider):
             mb = re.findall('\\d+', val)[0]
             config = configparser.ConfigParser()
             config.read('config.ini')
-            f = open(config['DEFAULT']['OUTPUT'], "a")
+            f = open(config.get('DEFAULT', 'OUTPUT'), "a")
             f.write(str(math.floor(time.time())))
             f.write(":" + mb + "\n")
             f.close()
