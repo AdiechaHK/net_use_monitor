@@ -3,10 +3,20 @@ import scrapy
 import time
 import math
 import re
+import os
 
-class BlogSpider(scrapy.Spider):
-    name = 'blogspider'
+class VisionSpider(scrapy.Spider):
+    name = 'vision_spider'
     start_urls = ['http://3.7.153.175/vtpl/customer']
+    user = 'HK_HOME'
+
+    def __init__(self):
+        super(VisionSpider, self).__init__()
+        dirname = os.path.dirname(__file__)
+        filename = os.path.join(dirname, 'config.ini')
+        self.config = configparser.ConfigParser()
+        self.config.read(filename)
+
 
     def parse(self, response):
         fields = [
@@ -19,12 +29,13 @@ class BlogSpider(scrapy.Spider):
         ]
 
         params = dict(
-            txtUserName="HARIKRUSHNA_KRUSHNANAGAR",
-            txtPassword="123456",
+            txtUserName=self.config.get(self.user, 'USERNAME'),
+            txtPassword=self.config.get(self.user, 'PASSWORD'),
             ddlTheme="style5.css",
             DropDownList1="style.css",
             save="Log In"
         )
+
 
         for item in fields:
             q = response.css("#" + item + "::attr(value)")
@@ -50,9 +61,8 @@ class BlogSpider(scrapy.Spider):
         if (len(q) > 0):
             val = q.extract()[0]
             mb = re.findall('\\d+', val)[0]
-            config = configparser.ConfigParser()
-            config.read('config.ini')
-            f = open(config.get('DEFAULT', 'OUTPUT'), "a")
+            filename = os.path.join(self.config.get('DEFAULT', 'OUTPUT'), (self.user + "_NET_USAGE.txt").lower())
+            f = open(filename, "a")
             f.write(str(math.floor(time.time())))
             f.write(":" + mb + "\n")
             f.close()
