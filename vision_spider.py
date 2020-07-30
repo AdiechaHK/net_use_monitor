@@ -1,5 +1,6 @@
 import configparser
 import scrapy
+import urllib
 import time
 import math
 import re
@@ -14,6 +15,9 @@ class VisionSpider(scrapy.Spider):
         super(VisionSpider, self).__init__()
         dirname = os.path.dirname(__file__)
         filename = os.path.join(dirname, 'config.ini')
+        print("==============================================")
+        print("Config file path: " + filename)
+        print("==============================================")
         self.config = configparser.ConfigParser()
         self.config.read(filename)
 
@@ -42,8 +46,11 @@ class VisionSpider(scrapy.Spider):
             if (len(q) > 0):
                 params[item] = q.extract()[0]
 
+
+        formurl = urllib.parse.urljoin(response.url, response.css("#Form1::attr(action)").extract()[0])
+
         yield scrapy.FormRequest(
-            "http://3.7.153.175/vtpl/customer/Login.aspx?h8=1",
+            formurl,
             self.after_logged_in,
             formdata=params,
             headers={})
@@ -61,8 +68,11 @@ class VisionSpider(scrapy.Spider):
         if (len(q) > 0):
             val = q.extract()[0]
             mb = re.findall('\\d+', val)[0]
-            filename = os.path.join(self.config.get('DEFAULT', 'OUTPUT'), (self.user + "_NET_USAGE.txt").lower())
-            f = open(filename, "a")
+            filepath = os.path.join(self.config.get('DEFAULT', 'OUTPUT'), (self.user + "_NET_USAGE.txt").lower())
+            print("================================================")
+            print("Writting Data to file:" + filepath + " [" + mb + "]")
+            print("================================================")
+            f = open(filepath, "a")
             f.write(str(math.floor(time.time())))
             f.write(":" + mb + "\n")
             f.close()
