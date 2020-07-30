@@ -1,6 +1,5 @@
 import configparser
 import scrapy
-import urllib
 import time
 import math
 import re
@@ -47,10 +46,8 @@ class VisionSpider(scrapy.Spider):
                 params[item] = q.extract()[0]
 
 
-        formurl = urllib.parse.urljoin(response.url, response.css("#Form1::attr(action)").extract()[0])
-
         yield scrapy.FormRequest(
-            formurl,
+            "http://3.7.153.175/vtpl/customer/Login.aspx?h8=1",
             self.after_logged_in,
             formdata=params,
             headers={})
