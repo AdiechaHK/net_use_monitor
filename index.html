@@ -1,1 +1,350 @@
-<h1>Hello word</h1>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Internet usage</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+</head>
+<body>
+	<div id="app">
+		<nav class="navbar navbar-dark bg-primary navbar-expand-lg">
+			<div class="container">
+				<a class="navbar-brand" href="#">Internet Use </a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarText">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="https://harikrushna.info">About Me !</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container mt-3">
+			<div class="row">
+				<div class="col-md-4">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>From</th>
+								<td>{{ start | formatDate }}</td>
+							</tr>
+							<tr>
+								<th>To</th>
+								<td>{{ end | formatDate }}</td>
+							</tr>
+							<tr>
+								<th>Total Use</th>
+								<td>{{ totalUse | dataBytes }}</td>
+							</tr>
+							<tr>
+								<th>Average Daily Use</th>
+								<td>{{ daily | avg('val') | dataBytes }}</td>
+							</tr>
+							<tr>
+								<th>Last Balance</th>
+								<td>{{ list | min('v') | dataBytes }}</td>
+							</tr>
+						</tbody>
+					</table>
+					<div>
+						<div class="form-check form-check-inline">
+						  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="raw" v-model="type">
+						  <label class="form-check-label" for="inlineRadio1">Raw</label>
+						</div>
+						<div class="form-check form-check-inline">
+						  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="slot" v-model="type">
+						  <label class="form-check-label" for="inlineRadio2">Slot</label>
+						</div>
+						<div class="form-check form-check-inline">
+						  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="daily" v-model="type">
+						  <label class="form-check-label" for="inlineRadio3">Daily</label>
+						</div>
+						
+					</div>
+				</div>
+				<div class="col-md-8">
+					<table v-show="type == 'raw'" class="table table-bordered" >
+						<thead>
+							<tr>
+								<th>@</th>
+								<th>Balance</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in list">
+								<td>{{item.t | formatDate}}</td>
+								<td>{{item.v | dataBytes}}</td>
+							</tr>
+						</tbody>
+					</table>
+
+
+					<table class="table table-bordered" v-show="type == 'slot'">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Period</th>
+								<th>Usage</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in slots">
+								<td>{{item.from | formatDate}}</td>
+								<td>{{item.to | formatDate}}</td>
+								<td>{{(item.to - item.from) | period}}</td>
+								<td>{{item.val | dataBytes}}</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<table class="table table-bordered" v-show="type == 'daily'">
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Usage</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in daily">
+								<td>{{item.dt | formatDateOnly}}</td>
+								<td>{{item.val | dataBytes}}</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+
+			<!-- 
+			<select v-model="type">
+				<option value="raw">Raw</option>
+				<option value="slot">Slot</option>
+				<option value="daily">Daily</option>
+			</select>
+			 -->
+
+
+
+
+
+
+		</div>
+
+
+
+	</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	<!-- development version, includes helpful console warnings -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+	<!-- production version, optimized for size and speed -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+
+	<!-- Moment JS to play with date and time. -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js" integrity="sha512-rmZcZsyhe0/MAjquhTgiUcb4d9knaFc7b5xAfju483gbEXTkeJRUMIPk6s3ySZMYUHEcjKbjLjyddGWMrNEvZg==" crossorigin="anonymous"></script>
+
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+	<script type="text/javascript">
+
+		Vue.filter('formatDate', function(value) {
+		    if (value) {
+		        return moment(value * 1000).format('DD-MMM-YYYY hh:mm A')
+		    }
+		});
+
+		Vue.filter('formatDateOnly', function(value) {
+		    if (value) {
+		        return moment(value * 1000).format('DD-MMM-YYYY')
+		    }
+		});
+
+		Vue.filter('dataBytes', function(value) {
+		    if (value) {
+		    	return value > 1024 ? (value / 1024).toFixed(2) + " Gb": value + " Mb";
+		    }
+		});
+
+		Vue.filter('min', function(list, field) {
+		    if (list) {
+		    	let info = list.reduce((min, item) => {
+		    		if (item.hasOwnProperty(field))
+		    		{
+		    			return min == null || item[field] < min ? item[field]: min;
+		    		}
+		    		return min;
+		    	}, null);
+
+		    	return info === null ? 'n/A': info;
+		    	// return value > 1024 ? (value / 1024).toFixed(2) + " Gb": value + " Mb";
+		    }
+		});
+
+		Vue.filter('avg', function(list, field) {
+		    if (list) {
+		    	let info = list.reduce((json, item) => {
+		    		if (item.hasOwnProperty(field)) {
+		    			json.val += item[field];
+		    			json.count++;
+		    		}
+		    		return json;
+		    	}, {count:0, val:0});
+
+		    	return info.count === 0 ? 'n/A': Number((info.val/info.count).toFixed(2));
+		    	// return value > 1024 ? (value / 1024).toFixed(2) + " Gb": value + " Mb";
+		    }
+		});
+
+		Vue.filter('period', function(value) {
+
+			let timeStr = (t, u = 's') => {
+				const m = {
+					s: { mul: 60, next: 'm'},
+					m: { mul: 60, next: 'h'},
+					h: { mul: 24, next: 'd'}
+				}
+
+				return m.hasOwnProperty(u) ? ((Math.floor(t/m[u].mul) > 0 ? timeStr(Math.floor(t/m[u].mul), m[u].next):"") +" "+ (t%m[u].mul) + u) : (t + u);
+			}
+
+		    if (value) {
+		    	return timeStr(value);
+		    }
+		});
+
+		var app = new Vue({
+			el: '#app',
+			data: {
+				list: [],
+				start: null,
+				end: null,
+				err_msg: '',
+				type: 'raw'
+			},
+			computed: {
+				// a computed getter
+				slots: function () {
+					return this.list.reduce((json, item) => {
+						if (json.last != null) {
+							json.slots.push({
+								from: json.last.t,
+								to: item.t,
+								val: (json.last.v - item.v)
+							});
+						}
+						json.last = item;
+						return json;
+					}, { slots: [], last: null}).slots;
+				},
+				daily: function() {
+
+					let defaultJson = {
+						list: [],
+						last: null,
+						pending: 0
+					};
+
+
+					const sameDate = (a, b) => {
+						let adt = new Date(a*1000);
+						let bdt = new Date(b*1000);
+						return adt.toDateString() === bdt.toDateString();
+					}
+
+					const getStartingOfDay = t => {
+						let dt = new Date(t*1000);
+						dt.setHours(0);
+						dt.setMinutes(0);
+						dt.setSeconds(0);
+						return Math.floor(dt.getTime()/1000);
+					}
+
+					let info = this.list.reduce((json, item) => {
+						let curr = new Date(item.t*1000);
+						last = json.last;
+						json.last = item;
+
+						/* This will execute only once for first element */
+						if (last === null) {
+							return json;
+						}
+
+						/* This check is just validating input */
+						if (item.t < last.t) {
+							return json;
+						}
+
+
+						/* if the same dates there then we should consider them */
+						if (sameDate(last.t, item.t)) {
+							json.pending += last.v - item.v;
+							return json;
+						}
+
+						/* this will execute only if last date is not same as item date. */
+						let evalDt = new Date(last.t*1000);
+						evalDt.setHours(0);
+						evalDt.setMinutes(0);
+						evalDt.setSeconds(0);
+						let nxtDay = Math.floor(evalDt.getTime() / 1000);
+						const day = 60 * 60 * 24;
+
+						let valDiff = last.v - item.v;
+						let timeDiff = item.t - last.t
+						let curLast = last.t;
+						nxtDay += day;
+
+						while(nxtDay < item.t) {
+							let portion = Number((valDiff * (nxtDay - curLast) / timeDiff).toFixed(2));
+							json.list.push({dt: curLast, val: json.pending + portion}); 
+							json.pending = 0;
+							curLast = nxtDay;
+							nxtDay += day;
+						}
+						json.pending = Number((valDiff * (item.t - curLast) / timeDiff).toFixed(2));
+						return json;
+					}, defaultJson);
+
+					if (info.pending != 0) {
+						info.list.push({dt: info.last.t, val: info.pending});
+					}
+
+					return info.list;
+				},
+				totalUse: function() {
+					let maxbal = this.list.reduce((max, item) => max == null || item.v > max ? item.v : max, null);
+					let minbal = this.list.reduce((min, item) => min == null || item.v < min ? item.v : min, null);
+					return maxbal - minbal
+				}
+			},
+			created: function() {
+				axios.get('http://139.59.17.113/test.php').then(res => {
+
+					if (res.data.success === true) {
+						this.list = res.data.data;
+						this.start = res.data.min;
+						this.end = res.data.max;
+					} else {
+						this.err_msg = res.data.message;
+					}
+
+				}).catch(console.error);
+			}
+		})
+
+	</script>
+</body>
+</html>
